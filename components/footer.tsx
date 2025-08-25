@@ -166,7 +166,7 @@ export default function Footer() {
                 <li className="flex items-center">
                   <EnvelopeIcon className="w-5 h-5 text-secondary mr-3" />
                   <a
-                    href="mailto:hello@vabank.io"
+                    href="mailto:hello@vabank.dev"
                     className="text-white/70 text-sm hover:text-white"
                   >
                     hello@vabank.dev
