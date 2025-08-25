@@ -71,9 +71,10 @@ interface TechPracticeClientProps {
 }
 
 export function TechPracticeClient({ practices }: TechPracticeClientProps) {
-  // State for filtering
+  // State for filtering and hover
   const [activeTechCategory, setActiveTechCategory] = useState("all");
   const [visibleTechProjects, setVisibleTechProjects] = useState(6);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
 
   // Filter projects based on category
   const filteredTechProjects = practices.filter((practice) => {
@@ -142,8 +143,159 @@ export function TechPracticeClient({ practices }: TechPracticeClientProps) {
       {/* Projects Grid */}
       {filteredTechProjects.length > 0 ? (
         <>
+          {/* Mobile Swipeable Grid */}
+          <div className="md:hidden">
+            <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+              {filteredTechProjects
+                .slice(0, visibleTechProjects)
+                .map((practice) => (
+                  <motion.div
+                    key={practice._id}
+                    className="group relative bg-white/5 rounded-2xl overflow-hidden border border-white/10 hover:border-secondary/30 transition-all flex-shrink-0 w-80 snap-start flex flex-col"
+                    variants={itemVariants}
+                    onMouseEnter={() => setActiveProject(practice._id)}
+                    onMouseLeave={() => setActiveProject(null)}
+                  >
+                    {/* Project Image */}
+                    <div className="relative h-48 overflow-hidden bg-black flex-shrink-0">
+                      {practice.mainImage ? (
+                        <Image
+                          src={urlFor(practice.mainImage).url()}
+                          alt={practice.mainImage.alt || practice.name}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-white/10 flex items-center justify-center">
+                          <span className="text-white/50">
+                            No image available
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Category Badge */}
+                      {practice.category?.title && (
+                        <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-medium flex items-center gap-1.5">
+                          {
+                            techCategories.find(
+                              (c) =>
+                                c.name === practice.category?.title ||
+                                (c.id !== "all" &&
+                                  practice.category?.title
+                                    ?.toLowerCase()
+                                    .includes(c.id))
+                            )?.icon
+                          }
+                          {practice.category.title}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Project Content */}
+                    <div className="p-6 space-y-4 flex flex-col flex-grow">
+                      <div className="h-14">
+                        <h3 className="text-xl font-bold mb-1 line-clamp-2">
+                          {practice.name}
+                        </h3>
+                        {practice.lastUpdated && (
+                          <span className="text-xs text-white/50">
+                            Updated:{" "}
+                            {new Date(
+                              practice.lastUpdated
+                            ).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="h-16 overflow-hidden">
+                        <p className="text-white/70 text-sm line-clamp-3">
+                          {practice.shortDescription ||
+                            practice.longDescription ||
+                            "No description available"}
+                        </p>
+                      </div>
+
+                      {/* Progress Bar */}
+                      {practice.progress !== undefined && (
+                        <div className="pt-2">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-xs text-white/50">
+                              Progress
+                            </span>
+                            <span className="text-xs text-secondary font-medium">
+                              {practice.progress}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-white/10 rounded-full h-2">
+                            <div
+                              className="bg-secondary h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${practice.progress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2">
+                        {(practice.techTags || practice.tags || [])
+                          .slice(0, 3)
+                          .map((tag, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-white/5 rounded-md text-xs font-medium text-white/60"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        {(practice.techTags || practice.tags || []).length >
+                          3 && (
+                          <span className="px-2 py-1 bg-white/5 rounded-md text-xs font-medium text-white/60">
+                            +
+                            {(practice.techTags || practice.tags || []).length -
+                              3}{" "}
+                            more
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Links - Justified on one line */}
+                      <div className="mt-auto">
+                        <div className="flex justify-between items-center min-h-[24px]">
+                          {practice.repositoryUrl ? (
+                            <a
+                              href={practice.repositoryUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-white hover:text-secondary transition-colors text-sm font-medium"
+                            >
+                              View Repository{" "}
+                              <ArrowUpRightIcon className="w-3 h-3" />
+                            </a>
+                          ) : (
+                            <div></div>
+                          )}
+
+                          {practice.url && (
+                            <a
+                              href={practice.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-secondary hover:underline text-sm font-medium"
+                            >
+                              Live Demo <ArrowUpRightIcon className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+            </div>
+          </div>
+
+          {/* Desktop Grid */}
           <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -155,9 +307,11 @@ export function TechPracticeClient({ practices }: TechPracticeClientProps) {
                   key={practice._id}
                   className="group relative bg-white/5 rounded-2xl overflow-hidden border border-white/10 hover:border-secondary/30 transition-all flex flex-col h-full"
                   variants={itemVariants}
+                  onMouseEnter={() => setActiveProject(practice._id)}
+                  onMouseLeave={() => setActiveProject(null)}
                 >
                   {/* Project Image */}
-                  <div className="relative h-48 overflow-hidden bg-black">
+                  <div className="relative h-48 overflow-hidden bg-black flex-shrink-0">
                     {practice.mainImage ? (
                       <Image
                         src={urlFor(practice.mainImage).url()}
@@ -193,8 +347,8 @@ export function TechPracticeClient({ practices }: TechPracticeClientProps) {
 
                   {/* Project Content */}
                   <div className="p-6 space-y-4 flex flex-col flex-grow">
-                    <div>
-                      <h3 className="text-xl font-bold mb-1">
+                    <div className="h-16">
+                      <h3 className="text-xl font-bold mb-1 line-clamp-2">
                         {practice.name}
                       </h3>
                       {practice.lastUpdated && (
@@ -205,11 +359,13 @@ export function TechPracticeClient({ practices }: TechPracticeClientProps) {
                       )}
                     </div>
 
-                    <p className="text-white/70 text-sm line-clamp-3">
-                      {practice.shortDescription ||
-                        practice.longDescription ||
-                        "No description available"}
-                    </p>
+                    <div className="h-20 overflow-hidden">
+                      <p className="text-white/70 text-sm line-clamp-4">
+                        {practice.shortDescription ||
+                          practice.longDescription ||
+                          "No description available"}
+                      </p>
+                    </div>
 
                     {/* Progress Bar */}
                     {practice.progress !== undefined && (
@@ -232,7 +388,7 @@ export function TechPracticeClient({ practices }: TechPracticeClientProps) {
                     )}
 
                     {/* Tags */}
-                    <div className="flex flex-wrap gap-2 pt-2">
+                    <div className="flex flex-wrap gap-2">
                       {(practice.techTags || practice.tags || [])
                         .slice(0, 4)
                         .map((tag, index) => (
@@ -255,7 +411,7 @@ export function TechPracticeClient({ practices }: TechPracticeClientProps) {
                     </div>
 
                     {/* Links - Justified on one line */}
-                    <div className="pt-2 mt-auto">
+                    <div className="mt-auto">
                       <div className="flex justify-between items-center min-h-[24px]">
                         {practice.repositoryUrl ? (
                           <a
