@@ -22,7 +22,7 @@ export default function ServiceNavigation({
           className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all text-left ${
             activeService === service.id
               ? "bg-secondary text-white"
-              : "bg-white/5 text-white/70 hover:bg-white/10"
+              : "bg-white/10 text-white/70 hover:bg-white/10"
           }`}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}

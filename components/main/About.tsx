@@ -90,9 +90,9 @@ export default function AboutSection() {
                 <h3 className="text-xl font-bold mb-6">Key Stats</h3>
                 <div className="space-y-4">
                   {[
-                    { number: "16+", label: "Years Experience" },
-                    { number: "100+", label: "Projects Delivered" },
-                    { number: "50+", label: "Happy Clients" },
+                    { number: "16+", label: "Years of Business Experience" },
+                    { number: "50+", label: "Projects Delivered" },
+                    { number: "30+", label: "Happy Clients" },
                   ].map((stat, index) => (
                     <motion.div
                       key={index}
@@ -119,16 +119,16 @@ export default function AboutSection() {
                 <div className="space-y-4">
                   {[
                     {
-                      title: "Innovation First",
-                      desc: "Cutting-edge solutions for modern challenges",
+                      title: "Quality Delivery",
+                      desc: "Excellence in every project, every time",
                     },
                     {
                       title: "Client Success",
                       desc: "Your growth is our primary measure of success",
                     },
                     {
-                      title: "Quality Delivery",
-                      desc: "Excellence in every project, every time",
+                      title: "Innovation First",
+                      desc: "Cutting-edge solutions for modern challenges",
                     },
                   ].map((value, index) => (
                     <motion.div

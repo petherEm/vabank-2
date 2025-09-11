@@ -68,7 +68,7 @@ export default function ServiceVisualization({
           <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
           <div className="text-xs text-white/80">AI Agent - Online</div>
         </div>
-        <div className="ml-auto text-xs text-white/60">GPT-4 • Claude</div>
+        <div className="ml-auto text-xs text-white/60">GPT-5 • Claude</div>
       </div>
 
       {/* Chat messages */}

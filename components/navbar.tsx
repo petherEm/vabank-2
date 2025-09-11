@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const links = [
-  { href: "#services", label: "What we do" },
-  { href: "#work", label: "Our works" },
-  { href: "#tech-stack", label: "Tech Stack" },
-  { href: "/blog", label: "Readings" },
+  { href: "/#services", label: "What we do" },
+  { href: "/#work", label: "Our works" },
+  { href: "/#tech-stack", label: "Tech Stack" },
+  { href: "/blog", label: "Blog" },
 ];
 
 function DesktopNav() {

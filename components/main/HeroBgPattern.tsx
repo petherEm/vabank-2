@@ -55,8 +55,22 @@ const HeroBgPattern = () => {
             isRed: true,
           },
           {
+            text: "RAG",
+            top: "40%",
+            left: "35%",
+            delay: "0s",
+            isRed: true,
+          },
+          {
             text: "NEXTJS",
             top: "20%",
+            right: "15%",
+            delay: "0.5s",
+            isRed: false,
+          },
+          {
+            text: "PERFORMANCE",
+            top: "60%",
             right: "15%",
             delay: "0.5s",
             isRed: false,

@@ -8,7 +8,7 @@ interface ServiceHeaderProps {
 
 export default function ServiceHeader({
   title = "WHAT WE DO",
-  description = "We deliver cutting-edge solutions that combine technical excellence with strategic business thinking to help your organization thrive in the digital age.",
+  description = "We deliver cutting-edge solutions that combine technical excellence with strategic business thinking to help your organization thrive in\n the AI driven age.",
   className = "",
 }: ServiceHeaderProps) {
   return (
@@ -22,7 +22,7 @@ export default function ServiceHeader({
           title
         )}
       </h2>
-      <p className="text-xl text-white/70">{description}</p>
+      <p className="text-xl text-white/70 whitespace-pre-line">{description}</p>
     </div>
   );
 }
