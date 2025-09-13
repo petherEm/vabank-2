@@ -17,12 +17,13 @@ export const getAllPractices = async () => {
       lastUpdated,
       progress,
       repositoryUrl,
+      order,
       "category": category {
         _ref,
         _key,
         "title": @->title
       }
-    } | order(_createdAt desc)`
+    } | order(order asc, _createdAt desc)`
   );
   
   try {

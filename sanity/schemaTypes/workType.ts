@@ -97,6 +97,13 @@ export const workType = defineType({
         })
       ]
     }),
+    defineField({
+      name: 'order',
+      title: 'Display Order',
+      type: 'number',
+      description: 'Used to control the order in which works are displayed',
+      validation: (Rule) => Rule.integer().min(0),
+    }),
   ],
   preview: {
     select: {

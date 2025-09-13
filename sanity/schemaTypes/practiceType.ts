@@ -111,6 +111,13 @@ export const practiceType = defineType({
       type: 'url',
       description: 'Link to the code repository (GitHub, GitLab, etc.)',
     }),
+    defineField({
+      name: 'order',
+      title: 'Display Order',
+      type: 'number',
+      description: 'Used to control the order in which practices are displayed',
+      validation: (Rule) => Rule.integer().min(0),
+    }),
   ],
   preview: {
     select: {

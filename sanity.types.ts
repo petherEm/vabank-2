@@ -92,6 +92,7 @@ export type Practice = {
   lastUpdated?: string;
   progress?: number;
   repositoryUrl?: string;
+  order?: number;
 };
 
 export type Work = {
@@ -171,6 +172,7 @@ export type Work = {
     alt?: string;
     _type: "image";
   };
+  order?: number;
 };
 
 export type Post = {
@@ -516,7 +518,7 @@ export type ALL_POSTS_QUERYResult = Array<{
 
 // Source: ./sanity/lib/queries/getAllPractices.ts
 // Variable: ALL_PRACTICES_QUERY
-// Query: *[_type == "practice"] {      _id,      name,      slug,      shortDescription,      longDescription,      url,      tags,      techTags,      mainImage,      secondaryImage,      lastUpdated,      progress,      repositoryUrl,      "category": category {        _ref,        _key,        "title": @->title      }    } | order(_createdAt desc)
+// Query: *[_type == "practice"] {      _id,      name,      slug,      shortDescription,      longDescription,      url,      tags,      techTags,      mainImage,      secondaryImage,      lastUpdated,      progress,      repositoryUrl,      order,      "category": category {        _ref,        _key,        "title": @->title      }    } | order(order asc, _createdAt desc)
 export type ALL_PRACTICES_QUERYResult = Array<{
   _id: string;
   name: string | null;
@@ -586,6 +588,7 @@ export type ALL_PRACTICES_QUERYResult = Array<{
   lastUpdated: string | null;
   progress: number | null;
   repositoryUrl: string | null;
+  order: number | null;
   category: {
     _ref: string;
     _key: null;
@@ -595,7 +598,7 @@ export type ALL_PRACTICES_QUERYResult = Array<{
 
 // Source: ./sanity/lib/queries/getAllWorks.ts
 // Variable: ALL_WORKS_QUERY
-// Query: *[_type == "work"] {      _id,      name,      slug,      shortDescription,      longDescription,      clientName,      url,      tags,      techTags,      mainImage,      secondaryImage,      "category": category {        _ref,        _key,        "title": @->title      }    } | order(_createdAt desc)
+// Query: *[_type == "work"] {      _id,      name,      slug,      shortDescription,      longDescription,      clientName,      url,      tags,      techTags,      mainImage,      secondaryImage,      order,      "category": category {        _ref,        _key,        "title": @->title      }    } | order(order asc, _createdAt desc)
 export type ALL_WORKS_QUERYResult = Array<{
   _id: string;
   name: string | null;
@@ -663,6 +666,7 @@ export type ALL_WORKS_QUERYResult = Array<{
     alt?: string;
     _type: "image";
   } | null;
+  order: number | null;
   category: {
     _ref: string;
     _key: null;
@@ -889,8 +893,8 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"post\"] {\n      _id,\n      title,\n      slug,\n      \"author\": author->{\n        name,\n        _id\n      },\n      mainImage{\n        asset,\n        alt\n      },\n      \"categories\": categories[]->title,\n      publishedAt,\n      isFeatured,\n      readingTime,\n      body\n    } | order(publishedAt desc)": ALL_POSTS_QUERYResult;
-    "*[_type == \"practice\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      lastUpdated,\n      progress,\n      repositoryUrl,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    } | order(_createdAt desc)": ALL_PRACTICES_QUERYResult;
-    "*[_type == \"work\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    } | order(_createdAt desc)": ALL_WORKS_QUERYResult;
+    "*[_type == \"practice\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      lastUpdated,\n      progress,\n      repositoryUrl,\n      order,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    } | order(order asc, _createdAt desc)": ALL_PRACTICES_QUERYResult;
+    "*[_type == \"work\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      order,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    } | order(order asc, _createdAt desc)": ALL_WORKS_QUERYResult;
     "*[_type == \"post\" && slug.current == $slug][0] {\n      _id,\n      title,\n      slug,\n      \"author\": author->{\n        name,\n        _id\n      },\n      mainImage{\n        asset,\n        alt\n      },\n      \"categories\": categories[]->title,\n      publishedAt,\n      isFeatured,\n      readingTime,\n      body\n    }": POST_BY_SLUG_QUERYResult;
     "*[_type == \"practice\" && slug.current == $slug][0] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      lastUpdated,\n      progress,\n      repositoryUrl,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    }": PRACTICE_BY_SLUG_QUERYResult;
     "*[_type == \"work\" && slug.current == $slug][0] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    }": WORK_BY_SLUG_QUERYResult;

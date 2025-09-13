@@ -15,12 +15,13 @@ export const getAllWorks = async () => {
       techTags,
       mainImage,
       secondaryImage,
+      order,
       "category": category {
         _ref,
         _key,
         "title": @->title
       }
-    } | order(_createdAt desc)`
+    } | order(order asc, _createdAt desc)`
   );
   
   try {

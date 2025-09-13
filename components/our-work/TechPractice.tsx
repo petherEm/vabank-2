@@ -1,63 +1,32 @@
-import {
-  CodeBracketIcon,
-  BeakerIcon,
-  CommandLineIcon,
-  ServerIcon,
-} from "@heroicons/react/16/solid";
-import { GitlabIcon as GitHubIcon } from "lucide-react";
-
 import { getAllPractices } from "@/sanity/lib/queries/getAllPractices";
 import { TechPracticeClient } from "./TechPracticeClient";
-
-// Tech Project type definition
-type TechProject = {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  repoUrl: string;
-  demoUrl?: string;
-  tags: string[];
-  category: string;
-  metrics?: {
-    label: string;
-    value: string;
-  }[];
-  lastUpdated: string;
-};
-
-// Project categories
-const techCategories = [
-  {
-    id: "all",
-    name: "All Projects",
-    icon: <CodeBracketIcon className="w-4 h-4" />,
-  },
-  {
-    id: "open-source",
-    name: "Open Source",
-    icon: <GitHubIcon className="w-4 h-4" />,
-  },
-  {
-    id: "experiments",
-    name: "Experiments",
-    icon: <BeakerIcon className="w-4 h-4" />,
-  },
-  {
-    id: "infrastructure",
-    name: "Infrastructure",
-    icon: <ServerIcon className="w-4 h-4" />,
-  },
-  {
-    id: "tools",
-    name: "Developer Tools",
-    icon: <CommandLineIcon className="w-4 h-4" />,
-  },
-];
 
 export default async function TechPracticesSection() {
   // Fetch practices data
   const practices = await getAllPractices();
+
+  // Extract unique categories from the actual practices
+  const uniqueCategories = practices
+    .filter((practice) => practice.category?.title)
+    .reduce(
+      (acc, practice) => {
+        const categoryTitle = practice.category!.title!;
+        if (!acc.some((cat) => cat.title === categoryTitle)) {
+          acc.push({
+            id: practice.category!._ref,
+            title: categoryTitle,
+          });
+        }
+        return acc;
+      },
+      [] as { id: string; title: string }[]
+    );
+
+  // Add "All Projects" category at the beginning
+  const categories = [
+    { id: "all", title: "All Projects" },
+    ...uniqueCategories,
+  ];
 
   return (
     <section className="py-24 relative overflow-hidden" id="tech-practices">
@@ -140,7 +109,7 @@ export default async function TechPracticesSection() {
         </div>
 
         {/* Client Component */}
-        <TechPracticeClient practices={practices} />
+        <TechPracticeClient practices={practices} categories={categories} />
       </div>
     </section>
   );
