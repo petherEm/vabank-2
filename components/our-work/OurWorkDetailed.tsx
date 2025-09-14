@@ -300,7 +300,7 @@ export default function ProjectDetailPage({ work }: ProjectDetailPageProps) {
               Ready to Start Your Project?
             </h2>
             <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-              Let's discuss how we can help you achieve similar results with a
+              Let&apos;s discuss how we can help you achieve similar results with a
               custom solution tailored to your business needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

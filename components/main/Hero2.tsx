@@ -136,7 +136,7 @@ export default function Hero() {
                   size="lg"
                   className="text-white px-8 py-4 text-lg font-semibold group transition-colors border-b-2 border-secondary hover:bg-transparent"
                 >
-                  Let's Talk
+                  Let&apos;s Talk
                   <ChevronRightIcon className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
