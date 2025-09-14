@@ -12,6 +12,14 @@ interface ProjectsGridProps {
   projects: Project[];
 }
 
+// Utility function to capitalize first letter of each word
+const capitalizeText = (text: string) => {
+  return text
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export function ProjectsGrid({ projects }: ProjectsGridProps) {
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
@@ -45,7 +53,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
                 {/* Category Badge */}
                 {project.category?.title && (
                   <div className="absolute top-4 left-4 px-3 py-1 bg-secondary/90 rounded-full text-xs font-medium">
-                    {project.category.title}
+                    {capitalizeText(project.category.title)}
                   </div>
                 )}
 
@@ -158,7 +166,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
               {/* Category Badge */}
               {project.category?.title && (
                 <div className="absolute top-4 left-4 px-3 py-1 bg-secondary/90 rounded-full text-xs font-medium">
-                  {project.category.title}
+                  {capitalizeText(project.category.title)}
                 </div>
               )}
 

@@ -25,6 +25,14 @@ interface OurWorkClientProps {
   categories: Category[];
 }
 
+// Utility function to capitalize first letter of each word
+const capitalizeText = (text: string) => {
+  return text
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export function OurWorkClient({ projects, categories }: OurWorkClientProps) {
   // State for filtering and search
   const [activeCategory, setActiveCategory] = useState("all");
@@ -110,7 +118,7 @@ export function OurWorkClient({ projects, categories }: OurWorkClientProps) {
                       : "bg-white/5 text-white/70 hover:bg-white/10"
                   }`}
                 >
-                  {category.title}
+                  {capitalizeText(category.title)}
                 </button>
               ))}
             </div>
@@ -161,7 +169,7 @@ export function OurWorkClient({ projects, categories }: OurWorkClientProps) {
                       : "bg-white/5 text-white/70 hover:bg-white/10"
                   }`}
                 >
-                  {category.title}
+                  {capitalizeText(category.title)}
                 </button>
               ))}
             </div>
@@ -173,12 +181,12 @@ export function OurWorkClient({ projects, categories }: OurWorkClientProps) {
               <span className="text-sm text-white/50">Active filters:</span>
               {activeCategory !== "all" && (
                 <span className="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded-full">
-                  {categories.find((c) => c.id === activeCategory)?.title}
+                  {capitalizeText(categories.find((c) => c.id === activeCategory)?.title || "")}
                 </span>
               )}
               {searchQuery && (
                 <span className="text-xs bg-white/10 text-white px-2 py-1 rounded-full">
-                  "{searchQuery}"
+                  &quot;{searchQuery}&quot;
                 </span>
               )}
               <button
@@ -229,7 +237,7 @@ export function OurWorkClient({ projects, categories }: OurWorkClientProps) {
                         {/* Category Badge */}
                         {project.category?.title && (
                           <div className="absolute top-4 left-4 px-3 py-1 bg-secondary/90 rounded-full text-xs font-medium">
-                            {project.category.title}
+                            {capitalizeText(project.category.title)}
                           </div>
                         )}
 
@@ -355,7 +363,7 @@ export function OurWorkClient({ projects, categories }: OurWorkClientProps) {
                       {/* Category Badge */}
                       {project.category?.title && (
                         <div className="absolute top-4 left-4 px-3 py-1 bg-secondary/90 rounded-full text-xs font-medium">
-                          {project.category.title}
+                          {capitalizeText(project.category.title)}
                         </div>
                       )}
 

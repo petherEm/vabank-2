@@ -6,10 +6,30 @@ export const postType = defineType({
   title: 'Post',
   type: 'document',
   icon: DocumentTextIcon,
+  groups: [
+    {
+      name: 'content',
+      title: 'Content',
+      default: true,
+    },
+    {
+      name: 'media',
+      title: 'Media',
+    },
+    {
+      name: 'settings',
+      title: 'Settings',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
       type: 'string',
+      group: 'content',
     }),
     defineField({
       name: 'slug',
@@ -17,11 +37,13 @@ export const postType = defineType({
       options: {
         source: 'title',
       },
+      group: 'content',
     }),
     defineField({
       name: 'author',
       type: 'reference',
       to: {type: 'author'},
+      group: 'content',
     }),
     defineField({
       name: 'mainImage',
@@ -35,16 +57,19 @@ export const postType = defineType({
           type: 'string',
           title: 'Alternative text',
         })
-      ]
+      ],
+      group: 'media',
     }),
     defineField({
       name: 'categories',
       type: 'array',
       of: [defineArrayMember({type: 'reference', to: {type: 'category'}})],
+      group: 'settings',
     }),
     defineField({
       name: 'publishedAt',
       type: 'datetime',
+      group: 'settings',
     }),
     defineField({
       name: 'isFeatured',
@@ -52,6 +77,7 @@ export const postType = defineType({
       title: 'Featured Post',
       description: 'Mark this post as featured',
       initialValue: false,
+      group: 'settings',
     }),
     defineField({
       name: 'readingTime',
@@ -59,10 +85,19 @@ export const postType = defineType({
       title: 'Reading Time (minutes)',
       description: 'Estimated reading time in minutes',
       validation: Rule => Rule.min(1).max(120),
+      group: 'settings',
     }),
     defineField({
       name: 'body',
       type: 'blockContent',
+      group: 'content',
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO & Social Media',
+      type: 'seo',
+      description: 'Settings for search engines and social media sharing',
+      group: 'seo',
     }),
   ],
   preview: {

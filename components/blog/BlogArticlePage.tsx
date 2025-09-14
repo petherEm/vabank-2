@@ -17,6 +17,7 @@ import {
   FacebookIcon,
   CopyIcon,
   CheckIcon,
+  GithubIcon,
 } from "lucide-react";
 import { TagIcon } from "@heroicons/react/24/solid";
 import { PortableText } from "@portabletext/react";
@@ -128,7 +129,7 @@ const CodeBlock = ({ value }: { value: any }) => {
 const portableTextComponents = {
   types: {
     image: ({ value }: { value: any }) => (
-      <div className="my-8">
+      <div key={value._key} className="my-8">
         <Image
           src={urlFor(value.asset).url()}
           alt={value.alt || ""}
@@ -141,7 +142,7 @@ const portableTextComponents = {
     code: CodeBlock,
   },
   block: {
-    h2: ({ children }: { children: any }) => {
+    h2: ({ children, value }: { children: any; value: any }) => {
       const text = children?.[0] || "";
       const id = text
         .toString()
@@ -149,23 +150,62 @@ const portableTextComponents = {
         .replace(/[^\w\s]/g, "")
         .replace(/\s+/g, "-");
       return (
-        <h2 id={id} className="text-2xl font-bold mt-8 mb-4">
+        <h2 key={value._key} id={id} className="text-2xl font-bold mt-8 mb-4">
           {children}
         </h2>
       );
     },
-    h3: ({ children }: { children: any }) => (
-      <h3 className="text-xl font-bold mt-6 mb-3">{children}</h3>
+    h3: ({ children, value }: { children: any; value: any }) => (
+      <h3 key={value._key} className="text-xl font-bold mt-6 mb-3">{children}</h3>
     ),
-    normal: ({ children }: { children: any }) => (
-      <p className="mb-4 text-white/80 leading-relaxed">{children}</p>
+    h4: ({ children, value }: { children: any; value: any }) => (
+      <h4 key={value._key} className="text-lg font-semibold mt-5 mb-2">{children}</h4>
+    ),
+    normal: ({ children, value }: { children: any; value: any }) => (
+      <p key={value._key} className="mb-4 text-white/80 leading-relaxed">{children}</p>
+    ),
+    blockquote: ({ children, value }: { children: any; value: any }) => (
+      <blockquote key={value._key} className="border-l-4 border-secondary pl-6 py-4 my-6 bg-white/5 rounded-r-lg italic text-white/90">
+        {children}
+      </blockquote>
+    ),
+  },
+  list: {
+    bullet: ({ children, value }: { children: any; value: any }) => (
+      <ul key={value._key} className="mb-6 pl-6 space-y-2 list-disc marker:text-secondary">
+        {children}
+      </ul>
+    ),
+    number: ({ children, value }: { children: any; value: any }) => (
+      <ol key={value._key} className="mb-6 pl-6 space-y-2 list-decimal marker:text-secondary">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children, value }: { children: any; value: any }) => (
+      <li key={value._key} className="text-white/80 leading-relaxed pl-1">{children}</li>
+    ),
+    number: ({ children, value }: { children: any; value: any }) => (
+      <li key={value._key} className="text-white/80 leading-relaxed pl-1">{children}</li>
     ),
   },
   marks: {
+    strong: ({ children }: { children: any }) => (
+      <strong className="font-bold text-white">{children}</strong>
+    ),
+    em: ({ children }: { children: any }) => (
+      <em className="italic text-white/90">{children}</em>
+    ),
+    code: ({ children }: { children: any }) => (
+      <code className="bg-white/10 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">
+        {children}
+      </code>
+    ),
     link: ({ children, value }: { children: any; value: any }) => (
       <a
         href={value.href}
-        className="text-secondary hover:underline"
+        className="text-secondary hover:underline font-medium"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -179,6 +219,64 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
   const [activeHeading, setActiveHeading] = useState("");
   const [headings, setHeadings] = useState<{ id: string; text: string }[]>([]);
   const [copied, setCopied] = useState(false);
+
+  // Generate structured data for the blog post
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: generateExcerpt(post.body, 160),
+    author: {
+      "@type": "Person",
+      name: post.author.name,
+      ...(post.author.linkedin && { sameAs: [post.author.linkedin] }),
+      ...(post.author.github && { sameAs: post.author.linkedin ? [post.author.linkedin, post.author.github] : [post.author.github] }),
+      ...(post.author.title && { jobTitle: post.author.title }),
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Vabank.dev",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://vabank.dev/vabank-light.png",
+        width: 400,
+        height: 400,
+      },
+    },
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://vabank.dev/blog/${post.slug.current}`,
+    },
+    url: `https://vabank.dev/blog/${post.slug.current}`,
+    ...(post.mainImage && {
+      image: {
+        "@type": "ImageObject",
+        url: urlFor(post.mainImage.asset).width(1200).height(630).format('webp').url(),
+        width: 1200,
+        height: 630,
+        alt: post.mainImage.alt || post.title,
+      },
+    }),
+    ...(post.categories && post.categories.length > 0 && {
+      about: post.categories.map((category) => ({
+        "@type": "Thing",
+        name: category,
+      })),
+    }),
+    wordCount: post.body ? post.body.reduce((count, block) => {
+      if (block._type === 'block' && block.children) {
+        return count + block.children.reduce((blockCount, child) => {
+          return blockCount + (child.text?.split(' ').length || 0);
+        }, 0);
+      }
+      return count;
+    }, 0) : 0,
+    ...(post.readingTime && { timeRequired: `PT${post.readingTime}M` }),
+    inLanguage: "en-US",
+    isAccessibleForFree: true,
+  };
 
   // Format date
   const formatDate = (dateString: string) => {
@@ -248,7 +346,12 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <div className="min-h-screen bg-black text-white">
       {/* Article Header */}
       <section className="relative pt-24 pb-16 overflow-hidden">
         {/* Background Pattern */}
@@ -279,14 +382,6 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
             Back to Blog
           </Link>
 
-          {/* Categories */}
-          {post.categories && post.categories.length > 0 && (
-            <div className="mb-6">
-              <span className="px-4 py-1.5 bg-secondary/90 rounded-full text-sm font-medium">
-                {post.categories[0].title}
-              </span>
-            </div>
-          )}
 
           {/* Title */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
@@ -297,14 +392,23 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
           <div className="flex flex-wrap items-center gap-6 mb-8">
             <div className="flex items-center">
               <div className="w-10 h-10 rounded-full overflow-hidden relative mr-3 bg-secondary/20">
-                {/* You might want to add author avatar from Sanity */}
-                <div className="w-full h-full flex items-center justify-center text-lg font-bold">
-                  {post.author.name.charAt(0)}
-                </div>
+                {post.author.image ? (
+                  <Image
+                    src={urlFor(post.author.image.asset).width(80).height(80).url()}
+                    alt={post.author.image.alt || post.author.name}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-lg font-bold">
+                    {post.author.name.charAt(0)}
+                  </div>
+                )}
               </div>
               <div>
                 <p className="font-medium">{post.author.name}</p>
-                <p className="text-sm text-white/50">Author</p>
+                <p className="text-sm text-white/50">{post.author.title || "Author"}</p>
               </div>
             </div>
             <div className="flex items-center text-white/70">
@@ -437,33 +541,71 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
               <div className="mt-16 p-8 bg-white/5 rounded-2xl border border-white/10">
                 <div className="flex items-start gap-6">
                   <div className="w-16 h-16 rounded-full overflow-hidden relative flex-shrink-0 bg-secondary/20">
-                    <div className="w-full h-full flex items-center justify-center text-2xl font-bold">
-                      {post.author.name.charAt(0)}
-                    </div>
+                    {post.author.image ? (
+                      <Image
+                        src={urlFor(post.author.image.asset).width(128).height(128).url()}
+                        alt={post.author.image.alt || post.author.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl font-bold">
+                        {post.author.name.charAt(0)}
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">
+                  <div className="flex-grow">
+                    <h3 className="text-xl font-bold mb-1">
                       About {post.author.name}
                     </h3>
-                    <p className="text-white/70 mb-4">
-                      {post.author.name} is a content creator and developer
-                      passionate about sharing knowledge and insights.
-                    </p>
+                    {post.author.title && (
+                      <p className="text-secondary text-sm font-medium mb-3">
+                        {post.author.title}
+                      </p>
+                    )}
+                    <div className="text-white/70 mb-4">
+                      {post.author.bio && post.author.bio.length > 0 ? (
+                        <PortableText
+                          value={post.author.bio}
+                          components={{
+                            block: {
+                              normal: ({ children, value }: { children: any; value: any }) => (
+                                <p key={value._key} className="mb-2">{children}</p>
+                              ),
+                            },
+                          }}
+                        />
+                      ) : (
+                        <p>
+                          {post.author.name} is a content creator and developer
+                          passionate about sharing knowledge and insights.
+                        </p>
+                      )}
+                    </div>
                     <div className="flex gap-3">
-                      <a
-                        href="#"
-                        className="p-2 bg-white/10 rounded-full hover:bg-secondary/20 transition-colors"
-                        aria-label="Twitter"
-                      >
-                        <TwitterIcon className="w-4 h-4" />
-                      </a>
-                      <a
-                        href="#"
-                        className="p-2 bg-white/10 rounded-full hover:bg-secondary/20 transition-colors"
-                        aria-label="LinkedIn"
-                      >
-                        <LinkedinIcon className="w-4 h-4" />
-                      </a>
+                      {post.author.linkedin && (
+                        <a
+                          href={post.author.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 bg-white/10 rounded-full hover:bg-secondary/20 transition-colors"
+                          aria-label="LinkedIn"
+                        >
+                          <LinkedinIcon className="w-4 h-4" />
+                        </a>
+                      )}
+                      {post.author.github && (
+                        <a
+                          href={post.author.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 bg-white/10 rounded-full hover:bg-secondary/20 transition-colors"
+                          aria-label="GitHub"
+                        >
+                          <GithubIcon className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -500,6 +642,7 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

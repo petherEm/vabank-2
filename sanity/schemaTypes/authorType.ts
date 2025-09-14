@@ -36,6 +36,24 @@ export const authorType = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'linkedin',
+      title: 'LinkedIn URL',
+      type: 'url',
+      description: 'Link to LinkedIn profile',
+    }),
+    defineField({
+      name: 'github',
+      title: 'GitHub URL',
+      type: 'url',
+      description: 'Link to GitHub profile',
+    }),
+    defineField({
+      name: 'title',
+      title: 'Job Title',
+      type: 'string',
+      description: 'Author\'s job title or role',
+    }),
   ],
   preview: {
     select: {

@@ -6,12 +6,32 @@ export const workType = defineType({
   title: 'Work',
   type: 'document',
   icon: CaseIcon,
+  groups: [
+    {
+      name: 'content',
+      title: 'Content',
+      default: true,
+    },
+    {
+      name: 'media',
+      title: 'Media',
+    },
+    {
+      name: 'settings',
+      title: 'Settings',
+    },
+    {
+      name: 'seo',
+      title: 'SEO',
+    },
+  ],
   fields: [
     defineField({
       name: 'name',
       title: 'Project Name',
       type: 'string',
       validation: (Rule) => Rule.required(),
+      group: 'content',
     }),
     defineField({
       name: 'slug',
@@ -20,6 +40,7 @@ export const workType = defineType({
         source: 'name',
       },
       validation: (Rule) => Rule.required(),
+      group: 'content',
     }),
     defineField({
       name: 'shortDescription',
@@ -27,27 +48,32 @@ export const workType = defineType({
       type: 'text',
       rows: 3,
       validation: (Rule) => Rule.max(200),
+      group: 'content',
     }),
     defineField({
       name: 'longDescription',
       title: 'Long Description',
       type: 'blockContent',
+      group: 'content',
     }),
     defineField({
       name: 'clientName',
       title: 'Client Name',
       type: 'string',
+      group: 'content',
     }),
     defineField({
       name: 'url',
       title: 'Project URL',
       type: 'url',
+      group: 'content',
     }),
     defineField({
       name: 'category',
       title: 'Category',
       type: 'reference',
       to: {type: 'category'},
+      group: 'settings',
     }),
     defineField({
       name: 'tags',
@@ -57,6 +83,7 @@ export const workType = defineType({
       options: {
         layout: 'tags',
       },
+      group: 'settings',
     }),
     defineField({
       name: 'techTags',
@@ -66,6 +93,7 @@ export const workType = defineType({
       options: {
         layout: 'tags',
       },
+      group: 'settings',
     }),
     defineField({
       name: 'mainImage',
@@ -80,7 +108,8 @@ export const workType = defineType({
           type: 'string',
           title: 'Alternative text',
         })
-      ]
+      ],
+      group: 'media',
     }),
     defineField({
       name: 'secondaryImage',
@@ -95,7 +124,8 @@ export const workType = defineType({
           type: 'string',
           title: 'Alternative text',
         })
-      ]
+      ],
+      group: 'media',
     }),
     defineField({
       name: 'order',
@@ -103,6 +133,14 @@ export const workType = defineType({
       type: 'number',
       description: 'Used to control the order in which works are displayed',
       validation: (Rule) => Rule.integer().min(0),
+      group: 'settings',
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO & Social Media',
+      type: 'seo',
+      description: 'Settings for search engines and social media sharing',
+      group: 'seo',
     }),
   ],
   preview: {

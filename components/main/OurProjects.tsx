@@ -65,7 +65,7 @@ export default async function OurProjects() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
           <div>
             <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
-              OUR <span className="text-secondary">WORK</span>
+              OUR <span className="text-secondary">WORKS</span>
             </h2>
             <p className="text-xl text-white/70 max-w-2xl">
               We turn ambitious ideas into intelligent digital experiences that

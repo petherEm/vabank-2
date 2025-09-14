@@ -20,6 +20,17 @@ export const getAllWorks = async () => {
         _ref,
         _key,
         "title": @->title
+      },
+      seo{
+        metaTitle,
+        metaDescription,
+        keywords,
+        openGraphImage{
+          asset,
+          alt
+        },
+        noIndex,
+        canonical
       }
     } | order(order asc, _createdAt desc)`
   );

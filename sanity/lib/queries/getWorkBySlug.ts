@@ -19,6 +19,17 @@ export const getWorkBySlug = async (slug: string) => {
         _ref,
         _key,
         "title": @->title
+      },
+      seo{
+        metaTitle,
+        metaDescription,
+        keywords,
+        openGraphImage{
+          asset,
+          alt
+        },
+        noIndex,
+        canonical
       }
     }`
   );

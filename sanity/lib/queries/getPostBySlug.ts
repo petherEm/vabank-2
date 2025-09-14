@@ -8,8 +8,17 @@ export const getPostBySlug = async (slug: string) => {
       title,
       slug,
       "author": author->{
+        _id,
         name,
-        _id
+        slug,
+        title,
+        bio,
+        linkedin,
+        github,
+        image{
+          asset,
+          alt
+        }
       },
       mainImage{
         asset,
@@ -19,7 +28,18 @@ export const getPostBySlug = async (slug: string) => {
       publishedAt,
       isFeatured,
       readingTime,
-      body
+      body,
+      seo{
+        metaTitle,
+        metaDescription,
+        keywords,
+        openGraphImage{
+          asset,
+          alt
+        },
+        noIndex,
+        canonical
+      }
     }`
   );
   

@@ -36,7 +36,6 @@ export type Practice = {
   } | null;
 };
 
-
 interface Category {
   id: string;
   title: string;
@@ -47,7 +46,18 @@ interface TechPracticeClientProps {
   categories: Category[];
 }
 
-export function TechPracticeClient({ practices, categories }: TechPracticeClientProps) {
+// Utility function to capitalize first letter of each word
+const capitalizeText = (text: string) => {
+  return text
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
+export function TechPracticeClient({
+  practices,
+  categories,
+}: TechPracticeClientProps) {
   // State for filtering, search, and hover
   const [activeTechCategory, setActiveTechCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,7 +75,8 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
     // Search filtering
     const matchesSearch =
       searchQuery === "" ||
-      (practice.name && practice.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (practice.name &&
+        practice.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (practice.shortDescription &&
         practice.shortDescription
           .toLowerCase()
@@ -136,7 +147,7 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
                       : "bg-white/5 text-white/70 hover:bg-white/10"
                   }`}
                 >
-                  {category.title}
+                  {capitalizeText(category.title)}
                 </button>
               ))}
             </div>
@@ -187,7 +198,7 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
                       : "bg-white/5 text-white/70 hover:bg-white/10"
                   }`}
                 >
-                  {category.title}
+                  {capitalizeText(category.title)}
                 </button>
               ))}
             </div>
@@ -199,7 +210,7 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
               <span className="text-sm text-white/50">Active filters:</span>
               {activeTechCategory !== "all" && (
                 <span className="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded-full">
-                  {categories.find((c) => c.id === activeTechCategory)?.title}
+                  {capitalizeText(categories.find((c) => c.id === activeTechCategory)?.title || "")}
                 </span>
               )}
               {searchQuery && (
@@ -241,7 +252,11 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
                           {practice.mainImage ? (
                             <Image
                               src={urlFor(practice.mainImage).url()}
-                              alt={practice.mainImage.alt || practice.name || "Practice image"}
+                              alt={
+                                practice.mainImage.alt ||
+                                practice.name ||
+                                "Practice image"
+                              }
                               fill
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
@@ -256,7 +271,7 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
                           {/* Category Badge */}
                           {practice.category?.title && (
                             <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-medium">
-                              {practice.category.title}
+                              {capitalizeText(practice.category.title)}
                             </div>
                           )}
                         </div>
@@ -386,7 +401,11 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
                         {practice.mainImage ? (
                           <Image
                             src={urlFor(practice.mainImage).url()}
-                            alt={practice.mainImage.alt || practice.name || "Practice image"}
+                            alt={
+                              practice.mainImage.alt ||
+                              practice.name ||
+                              "Practice image"
+                            }
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
@@ -401,7 +420,7 @@ export function TechPracticeClient({ practices, categories }: TechPracticeClient
                         {/* Category Badge */}
                         {practice.category?.title && (
                           <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-medium">
-                            {practice.category.title}
+                            {capitalizeText(practice.category.title)}
                           </div>
                         )}
                       </div>

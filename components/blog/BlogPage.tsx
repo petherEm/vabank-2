@@ -36,21 +36,25 @@ type BlogPost = {
   body: any;
 };
 
-// Blog categories
-const blogCategories = [
-  { id: "all", name: "All Articles" },
-  { id: "Web Development", name: "Web Development" },
-  { id: "AI & Machine Learning", name: "AI & Machine Learning" },
-  { id: "Technology", name: "Technology" },
-  { id: "Business", name: "Business" },
-  { id: "Tutorials", name: "Tutorials" },
-];
+interface Category {
+  id: string;
+  title: string;
+}
 
 interface BlogPageProps {
   posts: BlogPost[];
+  categories: Category[];
 }
 
-export default function BlogPage({ posts }: BlogPageProps) {
+// Utility function to capitalize first letter of each word
+const capitalizeText = (text: string) => {
+  return text
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
+export default function BlogPage({ posts, categories }: BlogPageProps) {
   // State for filtering and search
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -204,7 +208,7 @@ export default function BlogPage({ posts }: BlogPageProps) {
                       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70" />
                       {post.categories && post.categories[0] && (
                         <div className="absolute top-4 left-4 px-3 py-1 bg-secondary/90 rounded-full text-xs font-medium">
-                          {post.categories[0]}
+                          {capitalizeText(post.categories[0])}
                         </div>
                       )}
                     </div>
@@ -217,10 +221,20 @@ export default function BlogPage({ posts }: BlogPageProps) {
                       </p>
                       <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-3">
-                            <span className="text-sm font-medium">
-                              {post.author.name.charAt(0)}
-                            </span>
+                          <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center mr-3 overflow-hidden">
+                            {post.author.image ? (
+                              <Image
+                                src={urlFor(post.author.image.asset).width(64).height(64).url()}
+                                alt={post.author.image.alt || post.author.name}
+                                width={32}
+                                height={32}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-sm font-medium">
+                                {post.author.name.charAt(0)}
+                              </span>
+                            )}
                           </div>
                           <div>
                             <p className="text-sm font-medium">
@@ -250,7 +264,7 @@ export default function BlogPage({ posts }: BlogPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {/* Category Filters */}
           <div className="flex flex-wrap justify-start gap-4 mb-12 overflow-x-auto pb-4 scrollbar-hide">
-            {blogCategories.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
@@ -260,7 +274,7 @@ export default function BlogPage({ posts }: BlogPageProps) {
                     : "bg-white/5 text-white/70 hover:bg-white/10"
                 }`}
               >
-                {category.name}
+                {capitalizeText(category.title)}
               </button>
             ))}
           </div>
@@ -292,7 +306,7 @@ export default function BlogPage({ posts }: BlogPageProps) {
                           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70" />
                           {post.categories && post.categories[0] && (
                             <div className="absolute top-4 left-4 px-3 py-1 bg-secondary/90 rounded-full text-xs font-medium">
-                              {post.categories[0]}
+                              {capitalizeText(post.categories[0])}
                             </div>
                           )}
                         </div>
@@ -305,10 +319,20 @@ export default function BlogPage({ posts }: BlogPageProps) {
                           </p>
                           <div className="flex items-center justify-between mt-4">
                             <div className="flex items-center">
-                              <div className="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center mr-2">
-                                <span className="text-xs font-medium">
-                                  {post.author.name.charAt(0)}
-                                </span>
+                              <div className="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center mr-2 overflow-hidden">
+                                {post.author.image ? (
+                                  <Image
+                                    src={urlFor(post.author.image.asset).width(56).height(56).url()}
+                                    alt={post.author.image.alt || post.author.name}
+                                    width={28}
+                                    height={28}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-xs font-medium">
+                                    {post.author.name.charAt(0)}
+                                  </span>
+                                )}
                               </div>
                               <p className="text-xs font-medium">
                                 {post.author.name}
@@ -345,7 +369,7 @@ export default function BlogPage({ posts }: BlogPageProps) {
               <div className="inline-block p-8 rounded-2xl bg-white/5 border border-white/10">
                 <h3 className="text-2xl font-bold mb-4">No articles found</h3>
                 <p className="text-white/70 mb-6">
-                  We couldn't find any articles matching your search criteria.
+                  We couldn&apos;t find any articles matching your search criteria.
                   Try adjusting your filters or search query.
                 </p>
                 <Button

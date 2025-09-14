@@ -173,6 +173,7 @@ export type Work = {
     _type: "image";
   };
   order?: number;
+  seo?: Seo;
 };
 
 export type Post = {
@@ -244,6 +245,29 @@ export type Post = {
     _type: "image";
     _key: string;
   }>;
+  seo?: Seo;
+};
+
+export type Seo = {
+  _type: "seo";
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: Array<string>;
+  openGraphImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  noIndex?: boolean;
+  canonical?: string;
 };
 
 export type Author = {
@@ -284,6 +308,9 @@ export type Author = {
     _type: "block";
     _key: string;
   }>;
+  linkedin?: string;
+  github?: string;
+  title?: string;
 };
 
 export type Category = {
@@ -456,18 +483,49 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Practice | Work | Post | Author | Category | BlockContent | Code | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = Practice | Work | Post | Seo | Author | Category | BlockContent | Code | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries/getAllPosts.ts
 // Variable: ALL_POSTS_QUERY
-// Query: *[_type == "post"] {      _id,      title,      slug,      "author": author->{        name,        _id      },      mainImage{        asset,        alt      },      "categories": categories[]->title,      publishedAt,      isFeatured,      readingTime,      body    } | order(publishedAt desc)
+// Query: *[_type == "post"] {      _id,      title,      slug,      "author": author->{        _id,        name,        slug,        title,        bio,        linkedin,        github,        image{          asset,          alt        }      },      mainImage{        asset,        alt      },      "categories": categories[]->title,      publishedAt,      isFeatured,      readingTime,      body,      seo{        metaTitle,        metaDescription,        keywords,        openGraphImage{          asset,          alt        },        noIndex,        canonical      }    } | order(publishedAt desc)
 export type ALL_POSTS_QUERYResult = Array<{
   _id: string;
   title: string | null;
   slug: Slug | null;
   author: {
-    name: string | null;
     _id: string;
+    name: string | null;
+    slug: Slug | null;
+    title: string | null;
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    linkedin: string | null;
+    github: string | null;
+    image: {
+      asset: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      } | null;
+      alt: null;
+    } | null;
   } | null;
   mainImage: {
     asset: {
@@ -514,6 +572,22 @@ export type ALL_POSTS_QUERYResult = Array<{
     _type: "image";
     _key: string;
   }> | null;
+  seo: {
+    metaTitle: string | null;
+    metaDescription: string | null;
+    keywords: Array<string> | null;
+    openGraphImage: {
+      asset: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      } | null;
+      alt: string | null;
+    } | null;
+    noIndex: boolean | null;
+    canonical: string | null;
+  } | null;
 }>;
 
 // Source: ./sanity/lib/queries/getAllPractices.ts
@@ -598,7 +672,7 @@ export type ALL_PRACTICES_QUERYResult = Array<{
 
 // Source: ./sanity/lib/queries/getAllWorks.ts
 // Variable: ALL_WORKS_QUERY
-// Query: *[_type == "work"] {      _id,      name,      slug,      shortDescription,      longDescription,      clientName,      url,      tags,      techTags,      mainImage,      secondaryImage,      order,      "category": category {        _ref,        _key,        "title": @->title      }    } | order(order asc, _createdAt desc)
+// Query: *[_type == "work"] {      _id,      name,      slug,      shortDescription,      longDescription,      clientName,      url,      tags,      techTags,      mainImage,      secondaryImage,      order,      "category": category {        _ref,        _key,        "title": @->title      },      seo{        metaTitle,        metaDescription,        keywords,        openGraphImage{          asset,          alt        },        noIndex,        canonical      }    } | order(order asc, _createdAt desc)
 export type ALL_WORKS_QUERYResult = Array<{
   _id: string;
   name: string | null;
@@ -672,18 +746,65 @@ export type ALL_WORKS_QUERYResult = Array<{
     _key: null;
     title: string | null;
   } | null;
+  seo: {
+    metaTitle: string | null;
+    metaDescription: string | null;
+    keywords: Array<string> | null;
+    openGraphImage: {
+      asset: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      } | null;
+      alt: string | null;
+    } | null;
+    noIndex: boolean | null;
+    canonical: string | null;
+  } | null;
 }>;
 
 // Source: ./sanity/lib/queries/getPostBySlug.ts
 // Variable: POST_BY_SLUG_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {      _id,      title,      slug,      "author": author->{        name,        _id      },      mainImage{        asset,        alt      },      "categories": categories[]->title,      publishedAt,      isFeatured,      readingTime,      body    }
+// Query: *[_type == "post" && slug.current == $slug][0] {      _id,      title,      slug,      "author": author->{        _id,        name,        slug,        title,        bio,        linkedin,        github,        image{          asset,          alt        }      },      mainImage{        asset,        alt      },      "categories": categories[]->title,      publishedAt,      isFeatured,      readingTime,      body,      seo{        metaTitle,        metaDescription,        keywords,        openGraphImage{          asset,          alt        },        noIndex,        canonical      }    }
 export type POST_BY_SLUG_QUERYResult = {
   _id: string;
   title: string | null;
   slug: Slug | null;
   author: {
-    name: string | null;
     _id: string;
+    name: string | null;
+    slug: Slug | null;
+    title: string | null;
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    linkedin: string | null;
+    github: string | null;
+    image: {
+      asset: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      } | null;
+      alt: null;
+    } | null;
   } | null;
   mainImage: {
     asset: {
@@ -730,6 +851,22 @@ export type POST_BY_SLUG_QUERYResult = {
     _type: "image";
     _key: string;
   }> | null;
+  seo: {
+    metaTitle: string | null;
+    metaDescription: string | null;
+    keywords: Array<string> | null;
+    openGraphImage: {
+      asset: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      } | null;
+      alt: string | null;
+    } | null;
+    noIndex: boolean | null;
+    canonical: string | null;
+  } | null;
 } | null;
 
 // Source: ./sanity/lib/queries/getPracticeBySlug.ts
@@ -813,7 +950,7 @@ export type PRACTICE_BY_SLUG_QUERYResult = {
 
 // Source: ./sanity/lib/queries/getWorkBySlug.ts
 // Variable: WORK_BY_SLUG_QUERY
-// Query: *[_type == "work" && slug.current == $slug][0] {      _id,      name,      slug,      shortDescription,      longDescription,      clientName,      url,      tags,      techTags,      mainImage,      secondaryImage,      "category": category {        _ref,        _key,        "title": @->title      }    }
+// Query: *[_type == "work" && slug.current == $slug][0] {      _id,      name,      slug,      shortDescription,      longDescription,      clientName,      url,      tags,      techTags,      mainImage,      secondaryImage,      "category": category {        _ref,        _key,        "title": @->title      },      seo{        metaTitle,        metaDescription,        keywords,        openGraphImage{          asset,          alt        },        noIndex,        canonical      }    }
 export type WORK_BY_SLUG_QUERYResult = {
   _id: string;
   name: string | null;
@@ -886,17 +1023,33 @@ export type WORK_BY_SLUG_QUERYResult = {
     _key: null;
     title: string | null;
   } | null;
+  seo: {
+    metaTitle: string | null;
+    metaDescription: string | null;
+    keywords: Array<string> | null;
+    openGraphImage: {
+      asset: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      } | null;
+      alt: string | null;
+    } | null;
+    noIndex: boolean | null;
+    canonical: string | null;
+  } | null;
 } | null;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"post\"] {\n      _id,\n      title,\n      slug,\n      \"author\": author->{\n        name,\n        _id\n      },\n      mainImage{\n        asset,\n        alt\n      },\n      \"categories\": categories[]->title,\n      publishedAt,\n      isFeatured,\n      readingTime,\n      body\n    } | order(publishedAt desc)": ALL_POSTS_QUERYResult;
+    "*[_type == \"post\"] {\n      _id,\n      title,\n      slug,\n      \"author\": author->{\n        _id,\n        name,\n        slug,\n        title,\n        bio,\n        linkedin,\n        github,\n        image{\n          asset,\n          alt\n        }\n      },\n      mainImage{\n        asset,\n        alt\n      },\n      \"categories\": categories[]->title,\n      publishedAt,\n      isFeatured,\n      readingTime,\n      body,\n      seo{\n        metaTitle,\n        metaDescription,\n        keywords,\n        openGraphImage{\n          asset,\n          alt\n        },\n        noIndex,\n        canonical\n      }\n    } | order(publishedAt desc)": ALL_POSTS_QUERYResult;
     "*[_type == \"practice\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      lastUpdated,\n      progress,\n      repositoryUrl,\n      order,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    } | order(order asc, _createdAt desc)": ALL_PRACTICES_QUERYResult;
-    "*[_type == \"work\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      order,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    } | order(order asc, _createdAt desc)": ALL_WORKS_QUERYResult;
-    "*[_type == \"post\" && slug.current == $slug][0] {\n      _id,\n      title,\n      slug,\n      \"author\": author->{\n        name,\n        _id\n      },\n      mainImage{\n        asset,\n        alt\n      },\n      \"categories\": categories[]->title,\n      publishedAt,\n      isFeatured,\n      readingTime,\n      body\n    }": POST_BY_SLUG_QUERYResult;
+    "*[_type == \"work\"] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      order,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      },\n      seo{\n        metaTitle,\n        metaDescription,\n        keywords,\n        openGraphImage{\n          asset,\n          alt\n        },\n        noIndex,\n        canonical\n      }\n    } | order(order asc, _createdAt desc)": ALL_WORKS_QUERYResult;
+    "*[_type == \"post\" && slug.current == $slug][0] {\n      _id,\n      title,\n      slug,\n      \"author\": author->{\n        _id,\n        name,\n        slug,\n        title,\n        bio,\n        linkedin,\n        github,\n        image{\n          asset,\n          alt\n        }\n      },\n      mainImage{\n        asset,\n        alt\n      },\n      \"categories\": categories[]->title,\n      publishedAt,\n      isFeatured,\n      readingTime,\n      body,\n      seo{\n        metaTitle,\n        metaDescription,\n        keywords,\n        openGraphImage{\n          asset,\n          alt\n        },\n        noIndex,\n        canonical\n      }\n    }": POST_BY_SLUG_QUERYResult;
     "*[_type == \"practice\" && slug.current == $slug][0] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      lastUpdated,\n      progress,\n      repositoryUrl,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    }": PRACTICE_BY_SLUG_QUERYResult;
-    "*[_type == \"work\" && slug.current == $slug][0] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      }\n    }": WORK_BY_SLUG_QUERYResult;
+    "*[_type == \"work\" && slug.current == $slug][0] {\n      _id,\n      name,\n      slug,\n      shortDescription,\n      longDescription,\n      clientName,\n      url,\n      tags,\n      techTags,\n      mainImage,\n      secondaryImage,\n      \"category\": category {\n        _ref,\n        _key,\n        \"title\": @->title\n      },\n      seo{\n        metaTitle,\n        metaDescription,\n        keywords,\n        openGraphImage{\n          asset,\n          alt\n        },\n        noIndex,\n        canonical\n      }\n    }": WORK_BY_SLUG_QUERYResult;
   }
 }
