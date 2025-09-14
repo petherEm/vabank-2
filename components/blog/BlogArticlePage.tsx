@@ -220,6 +220,15 @@ export default function BlogArticlePage({ post }: BlogArticlePageProps) {
   const [headings, setHeadings] = useState<{ id: string; text: string }[]>([]);
   const [copied, setCopied] = useState(false);
 
+  // Generate excerpt from body (simplified)
+  const generateExcerpt = (body: any, maxLength = 150) => {
+    if (!body || !body[0]) return "";
+    const text = body[0].children?.[0]?.text || "";
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
+  };
+
   // Generate structured data for the blog post
   const structuredData = {
     "@context": "https://schema.org",
